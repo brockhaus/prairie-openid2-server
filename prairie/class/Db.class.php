@@ -52,6 +52,7 @@ class Database {
 				$GLOBALS['script_error_log'][] = $error_message;
 			}
 			else {
+				if (!isset($db)) $db = new stdClass();
 				$db->prefix = $this->db_config['prefix'];
 
 				// set up database collation

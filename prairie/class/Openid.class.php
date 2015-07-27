@@ -156,6 +156,8 @@ class OpenidServer {
 	// a simple debug-function.
 	// remove this later.
 	function _debug($arr=null, $filename="debug_array.txt") {
+	    if (!DEBUG) return;
+	    
 		if (!empty($arr)) {
 			$f = $filename;
 		}
@@ -165,6 +167,8 @@ class OpenidServer {
 		elseif (isset($_GET['openid_mode'])) {
 			$f = 'debug_' . $_GET['openid_mode'] . '.txt';
 		}
+		
+		$f = dirname(__FILE__) . "/../log/" . $f;
 		
 		if (empty($arr)) {
 			file_put_contents($f, $this->association_type."\n".microtime() . "\n\nGET\n\n" . implode("\n", explode('&', http_build_query($_GET))) . "\n\n\n\nPOST\n\n" . implode("\n", explode('&', http_build_query($_POST))));
@@ -319,7 +323,7 @@ class OpenidServer {
 	function sreg_extention (&$datax=array()) {
 		$sregflt = false; 
 		$fieldswanted = Array (); 
-	//	$this->_debug(); 
+		$this->_debug(); 
 		$values = GetFromURL("openid_sreg_required"); 
 		if ($values) {
 			$reqfields = explode (",", $values); 
@@ -334,7 +338,7 @@ class OpenidServer {
 				$fieldswanted[$flt]="OPTIONAL"; 
 			}
 		}
-//		$this->_debug($fieldswanted);
+		$this->_debug($fieldswanted);
 		if (!empty($fieldswanted)) { 
 			reset ($fieldswanted); 
 			foreach ($fieldswanted as $flt => $recopt) {
@@ -416,7 +420,7 @@ class OpenidServer {
 				$data_to_send['openid.assoc_handle'] = $this->assoc_handle();
 			}
 			
-			$this->sreg_extention (&$data_to_send);
+			$this->sreg_extention ($data_to_send);
 			
 			
 			$signed = '';
@@ -464,7 +468,7 @@ class OpenidServer {
 	
 	// see section 9.3 of specification
 	function checkid_immediate() {
-	//	$this->_debug(); 
+		$this->_debug(); 
 		$openid_identity = GetFromURL("openid_identity"); 
 		$openid_return_to = GetFromURL("openid_return_to"); 
 					
@@ -533,7 +537,7 @@ class OpenidServer {
 			if (strpos($openid_return_to, $s)) {
 				$s = '&';
 			}
-//	$this->_debug($data_to_send);
+	$this->_debug($data_to_send);
 			
 			// send us back to the consumer
 			header('location: ' . $openid_return_to . $s . http_build_query($data_to_send));
